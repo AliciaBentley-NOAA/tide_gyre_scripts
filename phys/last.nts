@@ -1,0 +1,6 @@
+SFFILE  /meso/noscrub/Geoffrey.Manikin/phys//stream4_2017101612.sfc                                                                     
+AREA    @724030                                                                                                                         
+DATTIM  all                                                                                                                             
+SFPARM  t2ms                                                                                                                            
+OUTPUT  T                                                                                                                               
+IDNTYP  STID                                                                                                                            

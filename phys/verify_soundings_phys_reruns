@@ -1,0 +1,165 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mdlymdh=2017031000
+mdlymd=`echo $mdlymdh | cut -c1-8`
+stations="725620 724510 727470 726450 726320"
+stations="724510 722650 723630"
+stations="723570 723630 724510 724560 725580 725620 726590 744550 745600 724690 726620"
+stations="723570 744550 726620 725580 724560 724510 727640 726490 726590 725620"
+stations="723570 723630 722490 724560 724510 725580 726590 726620 727640" 
+stations="724510 724030 723630 725620"
+stations="727970 726940 725970 724930 723930 722930 723860=723880 724890 725820 726810 727860 727760=727750 727680 725765=726720 725720 723760 722740 724760 724690 723650 723640 722500 722510 722610 722650 723630 722490 723570 724510 724560 725620 725580 726620 726590 727640 727470 726490 724400 723400 722480 722400 722330 722350 722300 723270 745600 744550 726450 726340 726320 724260 722150 727120 743890 744940 725180 725280 725200 725010 724030 724020 723180 723170 723050 722080 722060 722140 747940 722100 722020 722010 911650 912850 785260 703980 703610 703500 703260 702730 703080 702190 702610 701330 703160 702000"
+#stations="726490 727750=727760"
+stations="724030"
+
+mkdir /stmpp1/Alicia.Bentley/gempak.sound
+rm /stmpp1/Alicia.Bentley/gempak.sound/*
+cd /stmpp1/Alicia.Bentley/gempak.sound
+cp /meso/save/Alicia.Bentley/phys/coltbl.xwp .
+
+fmdl1=/meso/noscrub/Alicia.Bentley/phys/stream1_${mdlymdh}.snd
+fmdl2=/meso/noscrub/Alicia.Bentley/phys/stream2_${mdlymdh}.snd
+fmdl3=/meso/noscrub/Alicia.Bentley/phys/stream3_${mdlymdh}.snd
+fmdl4=/meso/noscrub/Alicia.Bentley/phys/stream4_${mdlymdh}.snd
+echo $fmdl1
+
+counter=0
+times="00 06 12 18 24 30 36 42 48 54 60 66 72 78 84 90 96 102 108 114 120 126 132 138 144"
+for time in $times; do
+for station in $stations; do
+
+stnnum=`echo $station | cut -d= -f1`
+stnnm=`echo $station | cut -d= -f2`
+echo $stnnum
+echo $stnnm
+stn=`echo $stnnm | cut -c1-5`
+echo 'final'
+echo $stn
+               
+#cp /ptmpd2/Alicia.Bentley/com2/nawips/prod/nam.${mdlymd}/nam_${stnm}_${mdlymdh}.snd nam_${stnm}_${mdlymdh}.snd
+#fmdl=nam_${stnm}_${mdlymdh}.snd
+dattim="`/meso/save/Alicia.Bentley/meg/advtime ${mdlymdh} $time -1 x`"
+validtime=`echo $dattim | cut -c1-11`
+ymd=`echo $validtime | cut -c1-8`
+cyc=`echo $validtime | cut -c10-11`
+fobs=/dcom/us007003/ldmdata/gempak/uair/$ymd.snd
+#fobs=/ptmpd2/Alicia.Bentley/com2/nawips/prod/obs/snd/$ymd.snd
+
+if [ $time -lt 10 ]
+then
+fhr=0${time}
+else
+fhr=$time
+fi
+
+    snprof << EOF
+ SNFILE   = $fmdl1
+ DATTIM   = $ymd/$cyc
+ AREA     = @${stnnum}
+ SNPARM   = tmpc;dwpc
+ LINE     = 2;4/2/7
+ PTYPE    = skewt
+ VCOORD   = PRES
+ STNDEX   = capv;cinv;lclp
+ STNCOL   = 24
+ WIND     = bk1
+ WINPOS   = 2
+ MARKER   = 0
+ BORDER   = 1//2
+ TITLE    = 1//  SUITE1 DASHED   OBS SOLID/LEFT WINDS
+ DEVICE   = gif|${stn}_stream12_${counter}.gif|1000;1000
+ YAXIS    = 1050/500/50/1;1;1
+ XAXIS    = -25/30/5/;1
+ FILTER   = 0.8
+ CLEAR    = y
+ PANEL    = t
+! TEXT     = 1.0/11/2/SW
+ TEXT     = 1.1/23/SW
+ THTALN   = 8/3/1/250/500/5
+ THTELN   = 23/1/1/250/500/5
+ MIXRLN   = 17/10/2/0/40./1.
+r
+
+ SNFILE   = $fobs
+ CLEAR    = n
+ WINPOS   = 1
+ LINE     = 2;4/1/5 
+ AREA     = @${stn}
+r
+
+ SNFILE   = $fmdl2
+ WINPOS   = 2
+ LINE     = 2;4/2/7
+ AREA     = @${stnnum}
+ TITLE    = 1//  SUITE2 DASHED   OBS SOLID/LEFT WINDS
+ PANEL    = b
+r
+
+ SNFILE   = $fobs
+ CLEAR    = n
+ WINPOS   = 1
+ LINE     = 2;4/1/5
+ AREA     = @${stn}
+r
+
+ SNFILE   = $fmdl3
+ WINPOS   = 2
+ LINE     = 2;4/2/7
+ AREA     = @${stnnum}
+ CLEAR    = y
+ DEVICE   = gif|${stn}_stream34_${counter}.gif|1000;1000
+ TITLE    = 1//  SUITE3 DASHED   OBS SOLID/LEFT WINDS
+ PANEL    = t
+r
+
+ SNFILE   = $fobs
+ CLEAR    = n
+ WINPOS   = 1
+ LINE     = 2;4/1/5
+ AREA     = @${stn}
+r
+
+ SNFILE   = $fmdl4
+ WINPOS   = 2
+ LINE     = 2;4/2/7
+ AREA     = @${stnnum}
+ TITLE    = 1//  SUITE4 DASHED   OBS SOLID/LEFT WINDS
+ PANEL    = b
+r
+
+ SNFILE   = $fobs
+ CLEAR    = n
+ WINPOS   = 1
+ LINE     = 2;4/1/5
+ AREA     = @${stn}
+r
+
+ex
+EOF
+
+done
+counter=`expr $counter + 1`
+done
+gpend
+
+counting="0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24"
+for count in $counting; do
+for stnm in $stations; do
+
+stnnum=`echo $stnm | cut -d= -f1`
+stnnm=`echo $stnm | cut -d= -f2`
+stn2=`echo $stnnm | cut -c1-5`
+stn=`expr $stn2 \* 10`
+
+CONV=/usrx/local/ImageMagick/6.8.3-3/bin
+$CONV/convert -crop 0x0 ${stn2}_stream12_${count}.gif ${stn}_${count}_1.gif
+$CONV/convert -crop 0x0 ${stn2}_stream34_${count}.gif ${stn}_${count}_2.gif 
+$CONV/montage -geometry 800x850 ${stn}_${count}_1.gif ${stn}_${count}_2.gif ${mdlymdh}_${stn}_${count}.gif
+done
+done
+
+scp ${mdlymdh}*gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/phys/${mdlymdh}/snd/.
+exit

@@ -1,0 +1,51 @@
+#!/bin/ksh --login
+#
+#BSUB -oo /meso/save/Alicia.Bentley/phys/sndphys.out
+#BSUB -eo /meso/save/Alicia.Bentley/phys/sndphys.out 
+#BSUB -J sndphys
+#BSUB -n 8 
+#BSUB -R span[ptile=4]
+#BSUB -W 00:35
+#BSUB -cwd /stmpp1/Alicia.Bentley
+#BSUB -R "affinity[core]"
+#BSUB -P GFS-T2O
+#BSUB -q "dev"
+#BSUB -x
+#BSUB -a poe
+#
+
+set -x
+
+ymdh=2016100200
+export HOLDIN=/stmpp1/Alicia.Bentley
+
+rm -rf $HOLDIN/gempak.sound
+mkdir -p $HOLDIN/gempak.sound
+mkdir -p $HOLDIN/gempak.sound/hold
+set +x
+set -x
+
+cd $HOLDIN/gempak.sound
+echo $ymdh > ${HOLDIN}/gempak.sound/hold/RETRODATE
+set +x
+rm poescript
+
+split="1 2 3 4 5 6 7 8"
+for unit in $split
+do
+
+echo $unit
+mkdir -p $HOLDIN/gempak.sound/phys${unit}
+echo "/meso/save/Alicia.Bentley/phys/verify_soundings_phys ${unit} ${ymdh}" >> poescript
+
+done
+
+chmod 775 poescript
+export MP_PGMMODEL=mpmd
+export MP_CMDFILE=poescript
+#
+# Execute the script.
+mpirun.lsf
+
+#bsub < /meso/save/Alicia.Bentley/phys/run_ftp_snd
+exit

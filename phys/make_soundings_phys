@@ -1,0 +1,104 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mdlymdh=2017101612
+
+mdlymd=`echo $mdlymdh | cut -c1-8`
+stations="724050 724060"
+
+mkdir /stmpp1/Geoffrey.Manikin/gempak.sound/
+mkdir /stmpp1/Geoffrey.Manikin/gempak.sound/phys99/
+rm /stmpp1/Geoffrey.Manikin/gempak.sound/phys99/*
+cd /stmpp1/Geoffrey.Manikin/gempak.sound/phys99
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+DAPATH=/meso/noscrub/Geoffrey.Manikin/phys/
+fmdl1=${DAPATH}/stream1_${mdlymdh}.snd
+fmdl2=${DAPATH}/stream2_${mdlymdh}.snd
+fmdl3=${DAPATH}/stream3_${mdlymdh}.snd
+fmdl4=${DAPATH}/stream4_${mdlymdh}.snd
+echo $fmdl1
+echo $mdlymdh
+
+for stn in $stations; do
+times="48 51 54 57 60"
+times="48"
+for fhr in $times; do
+
+dattim="`/meso/save/Geoffrey.Manikin/meg/advtime ${mdlymdh} $fhr -1 x`"
+validtime=`echo $dattim | cut -c1-11`
+ymd=`echo $validtime | cut -c1-8`
+cyc=`echo $validtime | cut -c10-11`
+
+if [ $fhr -lt 10 ]
+then
+fhr=0${fhr}
+fi
+
+    snprof << EOF
+ SNFILE   = $fmdl1
+ DATTIM   = $ymd/$cyc
+ AREA     = @${stn}
+ SNPARM   = tmpc;dwpc
+ LINE     = 2;4/2/7
+ PTYPE    = skewt
+ VCOORD   = PRES
+ STNDEX   = capv;cinv;lclp
+ STNCOL   = 24
+ WIND     = bk1
+ WINPOS   = 2
+ MARKER   = 0
+ BORDER   = 1//2
+ TITLE    = 1//  SUITE1 DASHED  
+ DEVICE   = gif|${stn}_stream12_${fhr}.gif|1000;1000
+ YAXIS    = 1050/500/50/1;1;1
+ XAXIS    = -25/30/5/;1
+ FILTER   = 0.8
+ CLEAR    = y
+ PANEL    = t
+! TEXT     = 1.0/11/2/SW
+ TEXT     = 1.1/23/SW
+ THTALN   = 8/3/1/250/500/5
+ THTELN   = 23/1/1/250/500/5
+ MIXRLN   = 17/10/2/0/40./1.
+r
+
+ SNFILE   = $fmdl2
+ CLEAR    = n
+ TITLE    = 1//  SUITE2 DASHED   
+ PANEL    = b
+r
+
+ SNFILE   = $fmdl3
+ CLEAR    = y
+ DEVICE   = gif|${stn}_stream34_${fhr}.gif|1000;1000
+ TITLE    = 1//  SUITE3 DASHED   
+ PANEL    = t
+r
+
+ SNFILE   = $fmdl4
+ TITLE    = 1//  SUITE4 DASHED  
+ CLEAR    = n
+ PANEL    = b
+r
+
+ex
+EOF
+
+done
+done
+gpend
+
+for stn in $stations; do
+for fhr in $times; do
+CONV=/usrx/local/ImageMagick/6.8.3-3/bin
+$CONV/convert -crop 0x0 ${stn}_stream12_${fhr}.gif ${stn}_${fhr}_1.gif
+$CONV/convert -crop 0x0 ${stn}_stream34_${fhr}.gif ${stn}_${fhr}_2.gif
+$CONV/montage -geometry 800x850 ${stn}_${fhr}_1.gif ${stn}_${fhr}_2.gif ${mdlymdh}_${stn}_${fhr}.gif
+done
+done
+
+scp ${mdlymdh}*gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/phys/${mdlymdh}/snd/.
+exit

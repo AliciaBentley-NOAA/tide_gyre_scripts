@@ -1,0 +1,94 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmpp1/Geoffrey.Manikin/meg/meteograms
+rm /stmpp1/Geoffrey.Manikin/meg/meteograms/*
+cd /stmpp1/Geoffrey.Manikin/meg/meteograms
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh1=2017101612
+ymd1=`echo $ymdh1 | cut -c1-8`
+day1=`echo $ymdh1 | cut -c7-8`
+cyc1=`echo $ymdh1 | cut -c9-10`
+
+max=30
+min=-5
+ymdhend="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh1} 72 -1`"
+dayend=`echo $ymdhend | cut -c7-8`
+cycend=`echo $ymdhend | cut -c9-10`
+
+ymdh2="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh1} 24 -1`"
+ymd2=`echo $ymdh2 | cut -c1-8`
+
+ymdh3="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh1} 48 -1`"
+ymd3=`echo $ymdh3 | cut -c1-8`
+
+ymdh4="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh1} 72 -1`"
+ymd4=`echo $ymdh4 | cut -c1-8`
+
+DAPATH=/meso/noscrub/Geoffrey.Manikin/phys/
+fmdl1=${DAPATH}/stream1_${ymdh1}.sfc
+fmdl2=${DAPATH}/stream2_${ymdh1}.sfc
+fmdl3=${DAPATH}/stream3_${ymdh1}.sfc
+fmdl4=${DAPATH}/stream4_${ymdh1}.sfc
+fmdl5=/dcom/us007003/ldmdata/gempak/hrly/${ymd1}.hrly
+fmdl6=/dcom/us007003/ldmdata/gempak/hrly/${ymd2}.hrly
+fmdl7=/dcom/us007003/ldmdata/gempak/hrly/${ymd3}.hrly
+fmdl8=/dcom/us007003/ldmdata/gempak/hrly/${ymd4}.hrly
+
+stations="723570 724510 724690 727640"
+for stnm in $stations; do
+
+sfgram << EOF 
+SFFILE	= $fmdl1 
+DATTIM	= ${day1}/${cyc1}-${dayend}/${cycend} 
+STATION = @$stnm
+TRACE1  = t2ms:1:4/2/${min};${max};5
+NTRACE	= 1 
+TAXIS	= ${day1}/${cyc1}-${dayend}/${cycend}
+BORDER	= 1//2
+MARKER	= 0
+TITLE   = 1/+3/ $stnm   2-M TEMP STREAM1-red   STREAM2-BLUE   STREAM3-LT GREEN  
+CLEAR	= yes
+DEVICE  = GIF|${stnm}_meteogram.gif | 900;800
+PANEL	= 0
+TEXT	= medium/22/2////HW 
+r
+
+SFFILE  = $fmdl2
+TRACE1  = t2ms:1:4/25/${min};${max};5
+TITLE   = 1/+4/       STREAM4-ORANGE     OBS-BLACK 
+CLEAR   = n
+r
+
+SFFILE  = $fmdl3
+TRACE1  = t2ms:1:4/22/${min};${max};5
+r
+
+SFFILE  = $fmdl4
+TRACE1  = t2ms:1:4/17/${min};${max};5
+r
+
+SFFILE  = $fmdl5
+#AREA    = @${stid}
+TRACE1  = tmpc:1:5/1/${min};${max};5
+r
+
+SFFILE  = $fmdl6
+r
+
+SFFILE  = $fmdl7
+r
+
+SFFILE  = $fmdl8
+r
+
+ex
+EOF
+done
+
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/phys/${ymdh1}/sfc/.
+exit

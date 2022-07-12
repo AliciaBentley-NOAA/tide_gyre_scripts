@@ -1,0 +1,26 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+stations="724030 725765=726720"
+
+for station in $stations; do
+  echo inside station loop
+  echo $station
+#   Find 6-digit obs station number in $GEMTBL.
+
+    echo 'before grep'
+        echo 'yes'
+        stnnum=`echo $station | cut -d= -f1`
+        stnnm=`echo $station | cut -d= -f2`
+
+echo $stnnum
+echo $stnnm
+stnn=`echo $stnnm | cut -c1-5`
+echo 'final'
+echo $stnn
+
+stn2=`expr $stnn \* 10`
+echo $stn2
+done

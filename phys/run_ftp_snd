@@ -1,0 +1,20 @@
+#! /bin/ksh
+#
+#BSUB -J meteo.ftp
+#BSUB -oo /meso/save/Geoffrey.Manikin/phys/meteoftp.out
+#BSUB -eo /meso/save/Geoffrey.Manikin/phys/meteoftp.out
+#BSUB -n 1
+#BSUB -W 00:10
+#BSUB -P GFS-T2O
+#BSUB -cwd /stmpp1/Geoffrey.Manikin
+#BSUB -R "affinity[core]"
+#BSUB -q transfer
+#BSUB -R "rusage[mem=300]"
+
+set -x
+
+cd /stmpp1/Geoffrey.Manikin/gempak.sound/hold
+
+mdlymdh=`cat RETRODATE | cut -c1-12`
+scp ${mdlymdh}*gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/phys/${mdlymdh}/snd/.
+exit
