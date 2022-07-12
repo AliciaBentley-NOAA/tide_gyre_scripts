@@ -1,0 +1,93 @@
+#/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+dayoweek=hold3
+mdlymdh=2018111512
+mdlymd=`echo $mdlymdh | cut -c1-8`
+stations="744550 726320 722150"
+stations="723570 723400 724560 726590"
+stations="723270 724400 723400"
+stations="725620 722080 726450 722300 722150 722350"
+stations="724560 744550 725580 724400"
+stations="725580 724560 744550 745600 726490"
+stations="725580 724560 723630"
+#stations="726940 724890 727680 727750"
+stations="725620 724510 727470 726450 726320"
+stations="724510 722650 723630"
+stations="723570 723630 724510 724560 725580 725620 726590 744550 745600 724690 726620"
+stations="723570 744550 726620 725580 724560 724510 727640 726490 726590 725620"
+stations="723570" 
+
+mkdir /stmpp1/Geoffrey.Manikin/gempak.sound
+rm /stmpp1/Geoffrey.Manikin/gempak.sound/*
+cd /stmpp1/Geoffrey.Manikin/gempak.sound
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+fmdl=/gpfs/hps/nco/ops/com/rap/prod/rap.${mdlymd}/nawips/rap_${mdlymdh}.snd
+#fmdl=/ptmpd2/Geoffrey.Manikin/com2/nawips/prod/nam.${mdlymd}/nam_${mdlymdh}.snd
+echo $fmdl
+
+times="00 12"
+for time in $times; do
+for stnm in $stations; do
+
+dattim="`/meso/save/Geoffrey.Manikin/meg/advtime ${mdlymdh} $time -1 x`"
+validtime=`echo $dattim | cut -c1-11`
+ymd=`echo $validtime | cut -c1-8`
+cyc=`echo $validtime | cut -c10-11`
+fobs=/dcom/us007003/ldmdata/gempak/uair/$ymd.snd
+#fobs=/ptmpd2/Geoffrey.Manikin/com2/nawips/prod/obs/snd/$ymd.snd
+
+stn=`echo $stnm | cut -c1-5`
+if [ $time -lt 10 ]
+then
+fhr=0${time}
+else
+fhr=$time
+fi
+
+    snprof << EOF
+ SNFILE   = $fmdl
+ DATTIM   = $ymd/$cyc
+ AREA     = @${stnm}
+ SNPARM   = tmpc;dwpc
+ LINE     = 2;4/2/6
+ PTYPE    = skewt
+ VCOORD   = PRES
+ STNDEX   = capv;cinv;lclp
+ STNCOL   = 24
+ WIND     = bk1
+ WINPOS   = 2
+ MARKER   = 0
+ BORDER   = 1//2
+ TITLE    = 1//  OPS RAP DASHED   OBS SOLID/LEFT WINDS
+ DEVICE   = gif|rap${stnm}_${mdlymdh}f$fhr.gif|1000;1000
+ YAXIS    = 1050/500/50/1;1;1
+ XAXIS    = -25/25/5/;1
+ FILTER   = 0.7
+ CLEAR    = y
+ PANEL    = 0
+! TEXT     = 1.0/11/2/SW
+ TEXT     = 1.1/23/SW
+ THTALN   = 8/3/1/250/500/5
+ THTELN   = 23/1/1/250/500/5
+ MIXRLN   = 17/10/2/0/40./1.
+r
+
+ SNFILE   = $fobs
+ CLEAR    = n
+ WINPOS   = 1
+ LINE     = 2;4/1/6 
+ AREA     = @${stn}
+r
+
+ex
+EOF
+
+done
+done
+gpend
+scp *gif abentley@emcrzdm:/home/people/emc/www/htdocs/users/Alicia.Bentley/MEG/soundings/.
+exit

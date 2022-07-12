@@ -1,0 +1,419 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+ymdh=2018111512
+dayoweek=hold8
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+mkdir /stmpp1/Geoffrey.Manikin/gempak.rtma
+mkdir /stmpp1/Geoffrey.Manikin/gempak.rtma/test
+rm /stmpp1/Geoffrey.Manikin/gempak.rtma/test/*
+cd /stmpp1/Geoffrey.Manikin/gempak.rtma/test/
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+proj="lcc/25.;-96.;25./2;2;1;1"
+garea="25.;-97.;49;-74."
+garea="38.;-103.;50.;-83."
+garea="28.;-103.;47.;-84."
+garea="23.;-100.;49.;-60."
+garea="ok+"
+#garea="30.;-115.;50.;-77."
+#garea="23.;-113.;51.;-67."
+#garea="28.;-124.;48.;-96."
+#garea="32.;-104.;46.;-84."
+garea="33.;-108.;51.;-84."
+garea="28.;-104.;40.;-90."
+ 
+base=84
+basem1=`expr $base - 4`
+basem2=`expr $base - 8`
+basem3=`expr $base - 12`
+basem4=`expr $base - 16`
+basem5=`expr $base - 20`
+basem6=`expr $base - 24`
+basem7=`expr $base - 28`
+basem8=`expr $base - 32`
+basem9=`expr $base - 36`
+basem10=`expr $base - 40`
+basem11=`expr $base - 44`
+basem12=`expr $base - 48`
+basem13=`expr $base - 52`
+basem14=`expr $base - 56`
+basem15=`expr $base - 60`
+basem16=`expr $base - 64`
+basem17=`expr $base - 68`
+basem18=`expr $base - 72`
+basem19=`expr $base - 76`
+basem20=`expr $base - 80`
+basem21=`expr $base - 84`
+basem22=`expr $base - 88`
+basem23=`expr $base - 92`
+basem24=`expr $base - 96`
+
+     sfmap << EOF
+ AREA     = $garea
+ GAREA    = $garea
+ SATFIL   =
+ RADFIL   =
+ SFPARM   = dwpf 
+ DATTIM   = ${day}/${cyc}
+ SFFILE   = /dcom/us007003/ldmdata/gempak/hrly/${ymd}.hrly 
+! SFFILE   = /ptmpp1/Geoffrey.Manikin/obs/${ymd}.sfc
+ COLORS   = 1 
+ MAP      = 1
+ LATLON   = 0
+ TITLE    = 1/-1/~   ALL OBS 
+ CLEAR    = no 
+ PANEL    = 0 
+ DEVICE   = GIF|${ymdh}_2dewobs.gif|800;800 
+ PROJ     = $proj 
+ FILTER   = none 
+ TEXT     = 1.0/21/2/SW
+ LUTFIL   =
+ STNPLT   =
+ CLRBAR   =
+r
+
+ SFPARM   = dwpf<$basem1
+ COLORS   = 14
+ TITLE    = 0
+r
+
+ SFPARM   = dwpf<$basem2
+ COLORS   = 15 
+r
+
+ SFPARM   = dwpf<$basem3
+ COLORS   = 2 
+r
+
+ SFPARM   = dwpf<$basem4
+ COLORS   = 16
+r
+
+ SFPARM   = dwpf<$basem5
+ COLORS   = 17 
+r
+
+ SFPARM   = dwpf<$basem6
+ COLORS   = 10 
+r
+
+ SFPARM   = dwpf<$basem7
+ COLORS   = 20 
+r
+
+ SFPARM   = dwpf<$basem8
+ COLORS   = 5 
+r
+
+ SFPARM   = dwpf<$basem9
+ COLORS   = 21 
+r
+
+ SFPARM   = dwpf<$basem10
+ COLORS   = 22
+r
+
+ SFPARM   = dwpf<$basem11
+ COLORS   = 23
+r
+
+ SFPARM   = dwpf<$basem12
+ COLORS   = 24
+r
+
+ SFPARM   = dwpf<$basem13
+ COLORS   = 27
+r
+
+ SFPARM   = dwpf<$basem14
+ COLORS   = 26
+r
+
+ SFPARM   = dwpf<$basem15
+ COLORS   = 25 
+r
+
+ SFPARM   = dwpf<$basem16
+ COLORS   = 4 
+r
+
+ SFPARM   = dwpf<$basem17
+ COLORS   = 28 
+r
+
+ SFPARM   = dwpf<$basem18
+ COLORS   = 29 
+r
+
+ SFPARM   = dwpf<$basem19
+ COLORS   = 30 
+r
+
+ SFPARM   = dwpf<$basem20
+ COLORS   = 7 
+r
+
+ SFPARM   = dwpf<$basem21
+ COLORS   = 12 
+r
+
+ SFPARM   = dwpf<$basem22
+ COLORS   = 9 
+r
+
+ SFPARM   = dwpf<$basem23
+ COLORS   = 11 
+r
+
+ SFPARM   = dwpf<$basem24
+ COLORS   = 32 
+r
+
+ SFFILE   = /dcom/us007003/ldmdata/gempak/ship/${ymd}${cyc}.ship
+ SFPARM   = dwpf<$base
+ COLORS   = 1 
+ TITLE    = 0
+r
+
+ SFPARM   = dwpf<$basem1
+ COLORS   = 14
+r
+
+ SFPARM   = dwpf<$basem2
+ COLORS   = 15
+r
+
+ SFPARM   = dwpf<$basem3
+ COLORS   = 2
+r
+
+ SFPARM   = dwpf<$basem4
+ COLORS   = 16
+r
+
+ SFPARM   = dwpf<$basem5
+ COLORS   = 17
+r
+
+ SFPARM   = dwpf<$basem6
+ COLORS   = 10
+r
+
+ SFPARM   = dwpf<$basem7
+ COLORS   = 20
+r
+
+ SFPARM   = dwpf<$basem8
+ COLORS   = 5
+r
+
+ SFPARM   = dwpf<$basem9
+ COLORS   = 21
+r
+
+ SFPARM   = dwpf<$basem10
+ COLORS   = 22
+r
+
+ SFPARM   = dwpf<$basem11
+ COLORS   = 23
+r
+
+ SFPARM   = dwpf<$basem12
+ COLORS   = 24
+r
+
+ SFPARM   = dwpf<$basem13
+ COLORS   = 27
+r
+
+ SFPARM   = dwpf<$basem14
+ COLORS   = 26
+r
+
+ SFPARM   = dwpf<$basem15
+ COLORS   = 25
+r
+
+ SFPARM   = dwpf<$basem16
+ COLORS   = 4
+r
+
+ SFPARM   = dwpf<$basem17
+ COLORS   = 28
+r
+
+ SFPARM   = dwpf<$basem18
+ COLORS   = 29
+r
+
+ SFPARM   = dwpf<$basem19
+ COLORS   = 30
+r
+
+ SFPARM   = dwpf<$basem20
+ COLORS   = 7
+r
+
+ SFPARM   = dwpf<$basem21
+ COLORS   = 12
+r
+
+ SFPARM   = dwpf<$basem22
+ COLORS   = 9
+r
+
+ SFPARM   = dwpf<$basem23
+ COLORS   = 11
+r
+
+ SFPARM   = dwpf<$basem24
+ COLORS   = 32
+r
+
+ex
+EOF
+
+count="1 2 3 4 5 6 7" 
+count="1"
+for counter in $count; do
+ if [ $counter -lt 10 ]
+  then
+   file="/ptmpp1/Geoffrey.Manikin/mesonet2/msonet${cyc}.gem.00${counter}"
+  else
+   file="/ptmpp1/Geoffrey.Manikin/mesonet2/msonet${cyc}.gem.0${counter}"
+ fi
+
+
+     sfmap << EOF
+ AREA     = $garea
+ GAREA    = $garea
+ SATFIL   =
+ RADFIL   =
+ SFPARM   = dwpf<$base 
+ DATTIM   = last 
+ SFFILE   = $file 
+ COLORS   = 1 
+ MAP      = 1
+ LATLON   = 0
+! TITLE    = 1//~  MESONET WINDS 
+ CLEAR    = NO 
+ PANEL    = 0 
+ DEVICE   = GIF|${ymdh}_2dewobs4.gif|800;800
+ PROJ     = $proj
+ FILTER   = none
+ TEXT     = 1.0/21/2/SW
+ LUTFIL   =
+ STNPLT   =
+ CLRBAR   =
+r
+
+ SFPARM   = dwpf<$basem1
+ COLORS   = 14
+ TITLE    = 0
+r
+
+ SFPARM   = dwpf<$basem2
+ COLORS   = 15
+r
+
+ SFPARM   = dwpf<$basem3
+ COLORS   = 2
+r
+
+ SFPARM   = dwpf<$basem4
+ COLORS   = 16
+r
+
+ SFPARM   = dwpf<$basem5
+ COLORS   = 17
+r
+
+ SFPARM   = dwpf<$basem6
+ COLORS   = 10
+r
+
+ SFPARM   = dwpf<$basem7
+ COLORS   = 20
+r
+
+ SFPARM   = dwpf<$basem8
+ COLORS   = 5
+r
+
+ SFPARM   = dwpf<$basem9
+ COLORS   = 21
+r
+
+ SFPARM   = dwpf<$basem10
+ COLORS   = 22
+r
+
+ SFPARM   = dwpf<$basem11
+ COLORS   = 23
+r
+
+ SFPARM   = dwpf<$basem12
+ COLORS   = 24
+r
+
+ SFPARM   = dwpf<$basem13
+ COLORS   = 27
+r
+
+ SFPARM   = dwpf<$basem14
+ COLORS   = 26
+r
+
+ SFPARM   = dwpf<$basem15
+ COLORS   = 25
+r
+
+ SFPARM   = dwpf<$basem16
+ COLORS   = 4
+r
+
+ SFPARM   = dwpf<$basem17
+ COLORS   = 28
+r
+
+ SFPARM   = dwpf<$basem18
+ COLORS   = 29
+r
+
+ SFPARM   = dwpf<$basem19
+ COLORS   = 30
+r
+
+ SFPARM   = dwpf<$basem20
+ COLORS   = 7
+r
+
+ SFPARM   = dwpf<$basem21
+ COLORS   = 12
+r
+
+ SFPARM   = dwpf<$basem22
+ COLORS   = 9
+r
+
+ SFPARM   = dwpf<$basem23
+ COLORS   = 11
+r
+
+ SFPARM   = dwpf<$basem24
+ COLORS   = 32
+r
+
+ex
+EOF
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

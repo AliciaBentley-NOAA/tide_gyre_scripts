@@ -1,0 +1,96 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+dayoweek=hold5
+mdlymdh=2016121700
+mdlymd=`echo $mdlymdh | cut -c1-8`
+stations="744550 726320 722150"
+stations="723570 723400 724560 726590"
+stations="723270 724400 723400"
+stations="725620 722080 726450 722300 722150 722350"
+stations="724560 744550 725580 724400"
+stations="725580 724560 744550 745600 726490"
+stations="725580 724560 723630"
+#stations="726940 724890 727680 727750"
+stations="725620 724510 727470 726450 726320"
+stations="724510 722650 723630"
+stations="723570 723630 724510 724560 725580 725620 726590 744550 745600 724690 726620"
+stations="724030 725280 725180 725200"
+stations="745600 744550"
+stations="724030 723170 725010"
+
+mkdir /stmpp1/Geoffrey.Manikin/gempak.sound
+rm /stmpp1/Geoffrey.Manikin/gempak.sound/*
+cd /stmpp1/Geoffrey.Manikin/gempak.sound
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+fmdl=/com2/nawips/prod/nam.${mdlymd}/nam_conusnest_${mdlymdh}.snd.tm00
+#fmdl=/ptmpd2/Geoffrey.Manikin/com2/nawips/prod/nam.${mdlymd}/nam_${mdlymdh}.snd
+echo $fmdl
+
+times="12 24"
+for time in $times; do
+for stnm in $stations; do
+
+#cp /ptmpd2/Geoffrey.Manikin/com2/nawips/prod/nam.${mdlymd}/nam_${stnm}_${mdlymdh}.snd nam_${stnm}_${mdlymdh}.snd
+#fmdl=nam_${stnm}_${mdlymdh}.snd
+dattim="`/meso/save/Geoffrey.Manikin/meg/advtime ${mdlymdh} $time -1 x`"
+validtime=`echo $dattim | cut -c1-11`
+ymd=`echo $validtime | cut -c1-8`
+cyc=`echo $validtime | cut -c10-11`
+fobs=/dcom/us007003/ldmdata/gempak/uair/$ymd.snd
+#fobs=/ptmpd2/Geoffrey.Manikin/com2/nawips/prod/obs/snd/$ymd.snd
+
+stn=`echo $stnm | cut -c1-5`
+if [ $time -lt 10 ]
+then
+fhr=0${time}
+else
+fhr=$time
+fi
+
+    snprof << EOF
+ SNFILE   = $fmdl
+ DATTIM   = $ymd/$cyc
+ AREA     = @${stnm}
+ SNPARM   = tmpc;dwpc
+ LINE     = 2;4/2/6
+ PTYPE    = skewt
+ VCOORD   = PRES
+ STNDEX   = capv;cinv;lclp
+ STNCOL   = 24
+ WIND     = bk1
+ WINPOS   = 2
+ MARKER   = 0
+ BORDER   = 1//2
+ TITLE    = 1//  NAM3 DASHED   OBS SOLID/LEFT WINDS
+ DEVICE   = gif|namnest${stnm}_${mdlymdh}f$fhr.gif|1000;1000
+ YAXIS    = 1050/400/50/1;1;1
+ XAXIS    = -20/25/10/;1
+ FILTER   = 0.7
+ CLEAR    = y
+ PANEL    = 0
+! TEXT     = 1.0/11/2/SW
+ TEXT     = 1.1/23/SW
+ THTALN   = 8/3/1/250/500/5
+ THTELN   = 23/1/1/250/500/5
+ MIXRLN   = 17/10/2/0/40./1.
+r
+
+ SNFILE   = $fobs
+ CLEAR    = n
+ WINPOS   = 1
+ LINE     = 2;4/1/6 
+ AREA     = @${stn}
+r
+
+ex
+EOF
+
+done
+done
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

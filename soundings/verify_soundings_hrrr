@@ -1,0 +1,93 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+dayoweek=hold5
+mdlymdh=2016121700
+mdlymd=`echo $mdlymdh | cut -c1-8`
+stations="744550 726320 722150"
+stations="723570 723400 724560 726590"
+stations="723270 724400 723400"
+stations="725620 722080 726450 722300 722150 722350"
+stations="724560 744550 725580 724400"
+stations="725580 724560 744550 745600 726490"
+stations="725620 724510 727470 726450 726320"
+stations="724030 722080 722150 723170 723180"
+stations="724030 725280 725180 725200"
+stations="724030 725010"
+
+mkdir /stmpp1/Geoffrey.Manikin/gempak.sound
+rm /stmpp1/Geoffrey.Manikin/gempak.sound/*
+cd /stmpp1/Geoffrey.Manikin/gempak.sound
+cp /meso/save/Geoffrey.Manikin/casework/*xwp .
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+cp /gpfs/hps/nco/ops/com/hrrr/prod/hrrr.${mdlymd}/conus/nawips/hrrr_${mdlymdh}.snd fmdl1
+#fmdl=/ptmpp1/Geoffrey.Manikin/test/hrrr_${mdlymdh}.snd
+echo $fmdl
+
+times="12"
+for time in $times; do
+for stnm in $stations; do
+
+stn=`echo $stnm | cut -c1-5`
+
+dattim="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${mdlymdh} $time -1 x`"
+validtime=`echo $dattim | cut -c1-11`
+ymd=`echo $validtime | cut -c1-8`
+cyc=`echo $validtime | cut -c10-11`
+fmdl2=/dcom/us007003/ldmdata/gempak/uair/$ymd.snd
+
+if [ $time -lt 10 ]
+then
+fhr=0${time}
+else
+fhr=$time
+fi
+
+    snprof << EOF
+ SNFILE   = fmdl1
+ DATTIM   = $ymd/$cyc
+ AREA     = @${stnm}
+ SNPARM   = tmpc;dwpc
+ LINE     = 2;4/2/6
+ PTYPE    = skewt
+ VCOORD   = PRES
+# STNDEX   = lift;cape;cins
+ STNDEX   = capv;cinv;lclp
+ STNCOL   = 24
+ WIND     = bk1
+ WINPOS   = 2
+ MARKER   = 0
+ BORDER   = 1//2
+ TITLE    = 1//  HRRR DASHED   OBS SOLID/LEFT WINDS
+ DEVICE   = gif|hrrr${stnm}_${mdlymdh}f$fhr.gif|1000;1000
+ YAXIS    = 1050/400/50/1;1;1
+ XAXIS    = -20/25/10/;1
+ FILTER   = 0.7
+ CLEAR    = y
+ PANEL    = 0
+! TEXT     = 1.0/11/2/SW
+ TEXT     = 1.1/23/SW
+ THTALN   = 8/3/1/250/500/5
+ THTELN   = 23/1/1/250/500/5
+ MIXRLN   = 17/10/2/0/40./1.
+r
+
+ SNFILE   = $fmdl2
+ CLEAR    = n
+ WINPOS   = 1
+ LINE     = 2;4/1/6 
+ AREA     = @${stn}
+r
+
+ex
+EOF
+
+done
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

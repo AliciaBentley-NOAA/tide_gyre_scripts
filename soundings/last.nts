@@ -1,0 +1,24 @@
+SNFILE  /dcom/us007003/ldmdata/gempak/uair/20181116.snd                                                                                 
+DATTIM  20181116/00                                                                                                                     
+AREA    @72357                                                                                                                          
+SNPARM  tmpc;dwpc                                                                                                                       
+LINE    2;4/1/6                                                                                                                         
+PTYPE   skewt                                                                                                                           
+VCOORD  PRES                                                                                                                            
+STNDEX  capv;cinv;lclp                                                                                                                  
+STNCOL  24                                                                                                                              
+WIND    bk1                                                                                                                             
+WINPOS  1                                                                                                                               
+MARKER  0                                                                                                                               
+BORDER  1//2                                                                                                                            
+TITLE   1//  OPS GFS DASHED   OBS SOLID/LEFT WINDS                                                                                      
+DEVICE  gif|gfs723570_2018111512f12.gif|1000;1000                                                                                       
+YAXIS   1050/500/50/1;1;1                                                                                                               
+XAXIS   -25/25/5/;1                                                                                                                     
+FILTER  0.7                                                                                                                             
+CLEAR   n                                                                                                                               
+PANEL   0                                                                                                                               
+TEXT    1.1/23/SW                                                                                                                       
+THTALN  8/3/1/250/500/5                                                                                                                 
+THTELN  23/1/1/250/500/5                                                                                                                
+MIXRLN  17/10/2/0/40./1.                                                                                                                
