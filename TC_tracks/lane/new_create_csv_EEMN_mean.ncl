@@ -1,0 +1,119 @@
+;;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>;;
+;;
+;; Creates GEFS tracks of TCs
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>;;
+load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/gsn_code.ncl"
+load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/gsn_csm.ncl"
+load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/contributed.ncl"
+load "$NCARG_ROOT/lib/ncarg/nclscripts/contrib/ut_string.ncl"
+load "./get_atcf_output.ncl"
+;************************************************************************
+
+begin
+
+print(" ")
+print("**************")
+print(" START SCRIPT ")
+print("**************")
+print(" ")
+
+int_time = "2018091312"
+TCname = "florence"
+
+print("int_time: "+int_time)
+
+dir_out = "./"
+filename = "ec_"+int_time+"_"+TCname+".csv"
+filename_mean = "ec_mean_EEMN_"+int_time+"_"+TCname+".csv"
+
+ens_num = -1
+line_num = 0
+line_num2 = 0
+outlines := new((/3000/),"string")
+outlines2 := new((/3000/),"string")
+
+do ens = 51,51,1   				; loop through all ensemble members
+
+;if (ens .ne. 28) .and. (ens .ne. 29) .and. (ens .ne. 39) then     ;2018090700
+;if ens .ne. 2 .and. ens .ne. 22 .and. ens .ne. 28 .and. ens .ne. 34 .and. ens .ne. 35 .and. ens .ne. 44 .and. ens .ne. 47 .and. ens .ne. 50 then       ;2018090800
+
+if ens .ne. 28 then                
+	
+	ens_num = ens_num + 1
+
+	if (ens .eq. 0) then
+	    mem = "ECME"
+	end if
+
+        if (ens .ge. 1 .and. ens .le. 9) then
+                mem = "EE0"+ens
+        end if
+
+	if (ens .ge. 10 .and. ens .le. 50) then
+		mem = "EE"+ens
+	end if
+
+        if (ens .eq. 51) then
+                mem = "EEMN"
+        end if
+
+	print("mem: "+mem)
+        print("ens_num: "+ens_num)
+
+	atcf_output := get_atcf("aal062018",mem,int_time,True)
+
+;	printVarSummary(atcf_output)
+	;print(atcf_output(0,:))
+
+	do i = 0,dimsizes(atcf_output(0,:))-1        ; loop through all times in this ensemble member
+
+   		time = atcf_output(0,i)
+   		time@units = "hours since 1800-01-01 00:00:00"
+   		utc_date = cd_calendar(time, 0)
+
+   		year   = tointeger(utc_date(:,0))    ; Convert to integer for
+   		month  = tointeger(utc_date(:,1))    ; use sprinti 
+   		day    = tointeger(utc_date(:,2))
+   		hour   = tointeger(utc_date(:,3))
+   		
+   		mslp = atcf_output(1,i)
+   		lat = atcf_output(2,i)
+   		lon = atcf_output(3,i)
+   		wind = atcf_output(4,i)
+   		ensemble = ens
+   
+        line = year+","+month+","+day+","+hour+","+mslp+","+lat+","+lon+","+wind+","+ensemble
+;   		print("line: "+line)
+   		
+                if ens .le. 50 then
+                        print("line_num: "+line_num)
+                        outlines(line_num) = line
+                        line_num = line_num + 1
+                end if
+
+                if ens .ge. 51 then
+                        print("line_num2: "+line_num2)
+                        outlines2(line_num2) = line
+                        line_num2 = line_num2 + 1
+                end if
+
+
+        end do
+
+	end if
+
+end do
+
+        line_num_final = line_num2
+        print("line_num_final: "+line_num_final)
+;        asciiwrite(dir_out+filename, outlines)
+        asciiwrite(dir_out+filename_mean, outlines2)
+
+print(" ")
+print("**************")
+print(" END SCRIPT ")
+print("**************")
+print(" ")
+
+end
